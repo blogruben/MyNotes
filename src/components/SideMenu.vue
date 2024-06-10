@@ -8,111 +8,163 @@
       separator-style="height: 3px"
     >
       <template #before>
-        <div class="row q-gutter-xs q-ml-sm q-mt-sm">
-          <div class="text-h6">Tags</div>
-          <q-fab color="black" push icon="sell" direction="right" padding="xs">
-            <q-fab-action
-              color="primary"
-              @click="dialog = true"
-              icon="edit"
+        <q-scroll-area
+          :thumb-style="thumbStyle"
+          :bar-style="barStyle"
+          style="height: 100%"
+        >
+          <div class="row q-gutter-xs q-ml-sm q-mt-sm">
+            <div class="text-h6">Tags</div>
+            <q-fab
+              color="none"
+              flat
+              push
+              icon="sell"
+              direction="right"
               padding="xs"
-            />
-            <q-fab-action
-              color="accent"
-              @click="console.log(altura())"
-              icon="delete"
-              padding="xs"
-            />
-            <q-fab-action
-              color="accent"
-              @click="console.log('ver todas las notas...')"
-              icon="note"
-              padding="xs"
-            />
-          </q-fab>
-        </div>
-        <q-tree
-          :nodes="simple"
-          node-key="id"
-          no-connectors
-          dense
-          v-model:expanded="expanded"
-          selected-color="primary bg-blue-2 rounded-borders"
-          v-model:selected="selected"
-          @click="console.log(selected)"
-        />
+            >
+              <q-fab-action
+                color="primary"
+                @click="console.log('ver las notas eliminadas...')"
+                icon="delete"
+                padding="xs"
+              />
+              <q-fab-action
+                color="primary"
+                @click="console.log('ver todas las notas...')"
+                icon="note"
+                padding="xs"
+              />
+            </q-fab>
+          </div>
+          <q-tree
+            :nodes="simple"
+            node-key="id"
+            no-connectors
+            dense
+            v-model:expanded="expanded"
+            selected-color="primary bg-blue-2 rounded-borders"
+            v-model:selected="selectedTagId"
+            no-selection-unset
+            @click="console.log('Tag selected: ' + selectedTagId)"
+          >
+            <template v-slot:default-header="prop">
+              <div class="row justify-between full-width">
+                <div class="col-10">
+                  <div class="text-weight-bold text-primary">
+                    {{ prop.node.label }}
+                  </div>
+                </div>
+
+                <div class="col-2">
+                  <q-btn
+                    flat
+                    padding="none"
+                    color="secondary"
+                    icon="more_horiz"
+                    @click="editTag"
+                  />
+                </div>
+              </div>
+            </template>
+          </q-tree>
+        </q-scroll-area>
       </template>
 
       <template #after>
-        <div class="text-h6 q-ml-md q-mt-sm">{{ selectedTag }}</div>
-        <q-list dense separator>
-          <q-item clickable v-ripple>
-            <q-item-section
-              >Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
-              veritatis
-            </q-item-section>
-          </q-item>
-
-          <q-item clickable v-ripple v-for="n in 20" :key="n">
-            <q-item-section>
-              <q-item-label>Nota numero {{ n }}</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
+        <q-scroll-area
+          :thumb-style="thumbStyle"
+          :bar-style="barStyle"
+          style="height: 100%"
+        >
+          <div class="text-h6 q-ml-md q-mt-sm">{{ selectedTag }}</div>
+          <q-list dense separator>
+            <q-item clickable v-ripple v-for="n in 20" :key="n">
+              <q-item-section>
+                <q-item-label :class="estilo" @click="selectNote(n)"
+                  >Nota numero {{ n }}</q-item-label
+                >
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-scroll-area>
       </template>
     </q-splitter>
   </div>
-
-  <q-dialog
-    v-model="dialog"
-    persistent
-    :maximized="true"
-    transition-show="slide-up"
-    transition-hide="slide-down"
-  >
-    <q-card class="bg-primary text-white">
-      <q-bar>
-        <q-space />
-        <q-btn dense flat icon="close" v-close-popup>
-          <q-tooltip class="bg-white text-primary">Close</q-tooltip>
-        </q-btn>
-      </q-bar>
-
-      <q-card-section>
-        <div class="text-h6">Alert</div>
-      </q-card-section>
-
-      <q-card-section class="q-pt-none">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum
-        repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis
-        perferendis totam, ea at omnis vel numquam exercitationem aut, natus
-        minima, porro labore.
-      </q-card-section>
-    </q-card>
-  </q-dialog>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
 
-const insideModel = ref(40);
+//Calculate height in pixel
 const height = ref("height: " + window.innerHeight + "px");
-
 window.addEventListener("resize", reportWindowSize);
-
 function reportWindowSize() {
   height.value = "height: " + window.innerHeight + "px";
 }
 
-const expanded = ref(["3"]);
-const dialog = ref(false);
+//variables
+const thumbStyle = {
+  right: "4px",
+  borderRadius: "5px",
+  backgroundColor: "#027be3",
+  width: "5px",
+  opacity: 0.75,
+};
 
-const selected = ref("2");
+const barStyle = {
+  right: "2px",
+  borderRadius: "9px",
+  backgroundColor: "#027be3",
+  width: "9px",
+  opacity: 0.2,
+};
 
-function altura() {
-  return window.innerHeight + "px";
+//propiedades computadas
+const selectedTag = computed(() => {
+  return findLabelById(simple.value, selectedTagId.value);
+});
+
+const estilo = computed(() => {
+  return {
+    "bg-dark": selectedNote.value === "2",
+    "text-white": selectedNote.value === "2",
+  };
+});
+
+//funciones
+function findLabelById(list, id) {
+  let returntag = list.find((tag) => {
+    return tag.id === id;
+  })?.label;
+  if (returntag) return returntag;
+  list.forEach((tag) => {
+    let sublist = tag?.children;
+    if (sublist) {
+      let subtag = findLabelById(sublist, id);
+      if (subtag) {
+        returntag = subtag;
+      }
+    }
+  });
+  return returntag;
 }
 
+function editTag(selectTag) {
+  setTimeout(function () {
+    alert("Edit Tag:  " + selectedTag.value);
+  }, 300);
+}
+
+function selectNote(id) {
+  console.log("Note selected: " + id);
+}
+
+//variables reactivas
+const insideModel = ref(40);
+const expanded = ref(["3"]);
+const selectedTagId = ref("2");
+const selectedNote = ref(2);
 const simple = ref([
   {
     id: "1",
@@ -185,25 +237,4 @@ const simple = ref([
     label: "Categoria 10",
   },
 ]);
-
-function findLabelById(list, id) {
-  let returntag = list.find((tag) => {
-    return tag.id === id;
-  })?.label;
-  if (returntag) return returntag;
-  list.forEach((tag) => {
-    let sublist = tag?.children;
-    if (sublist) {
-      let subtag = findLabelById(sublist, id);
-      if (subtag) {
-        returntag = subtag;
-      }
-    }
-  });
-  return returntag;
-}
-
-const selectedTag = computed(() => {
-  return findLabelById(simple.value, selected.value);
-});
 </script>
