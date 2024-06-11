@@ -33,24 +33,6 @@
       <side-menu @update="updateNote" />
     </q-drawer>
 
-    <q-dialog
-      v-model="dialog"
-      persistent
-      :maximized="true"
-      transition-show="slide-up"
-      transition-hide="slide-down"
-    >
-      <q-card class="bg-primary text-white">
-        <q-bar>
-          <q-space />
-          <q-btn dense flat icon="close" v-close-popup>
-            <q-tooltip class="bg-white text-primary">Close</q-tooltip>
-          </q-btn>
-        </q-bar>
-        <edit-tags></edit-tags>
-      </q-card>
-    </q-dialog>
-
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -60,9 +42,7 @@
 <script setup>
 import { ref } from "vue";
 import SideMenu from "../components/SideMenu.vue";
-import EditTags from "../components/EditTags.vue";
 
-const dialog = ref(false);
 const drawer = ref(false);
 const noteTitle = ref("");
 
