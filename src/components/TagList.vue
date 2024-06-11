@@ -120,7 +120,7 @@ onMounted(() => {
 
 //variables reactivas
 const expanded = ref(["3"]);
-const selectedTagId = ref("2");
+const selectedTagId = ref("1");
 const simple = ref([
   {
     id: "1",

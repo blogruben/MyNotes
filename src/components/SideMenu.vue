@@ -80,8 +80,10 @@ function updateTag(title) {
 const emit = defineEmits(["update"]);
 
 onMounted(() => {
-  console.log("Se ha montado el componente: " + selectedNote.value);
-  emit("update", selectedNote.value);
+  console.log(
+    "Se ha montado el componente: " + findNoteById(selectedNote.value)
+  );
+  emit("update", findNoteById(selectedNote.value));
 });
 
 const insideModel = ref(40);
@@ -163,5 +165,12 @@ const notes = [
   },
 ];
 
-const selectedNote = ref(notes[0]);
+const selectedNote = ref(notes[0].id);
+
+//funciones
+function findNoteById(id) {
+  return notes.find((note) => {
+    return note.id === id;
+  });
+}
 </script>
