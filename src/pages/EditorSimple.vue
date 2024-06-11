@@ -1,12 +1,15 @@
 <template>
-  <div class="q-pa-md q-gutter-sm">
-    <q-editor
-      v-model="editor"
-      :definitions="{
-        bold: { label: 'Bold', icon: null, tip: 'My bold tooltip' },
-      }"
-    />
-  </div>
+  <q-page class="bg-positive">
+    <div class="q-pa-md q-gutter-sm">
+      <q-editor
+        v-model="editor"
+        class="bg-positive"
+        :definitions="{
+          bold: { label: 'Bold', icon: null, tip: 'My bold tooltip' },
+        }"
+      />
+    </div>
+  </q-page>
 </template>
 
 <script setup>

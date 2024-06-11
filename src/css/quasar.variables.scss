@@ -12,14 +12,22 @@
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
-$primary   : #1976D2;
-$secondary : #26A69A;
-$accent    : #9C27B0;
+//descargar fuentes de aqui
+//https://fonts.google.com/?query=eg
+//@import url("https://fonts.googleapis.com/css2?family=Edu+QLD+Beginner:wght@600&family=Edu+SA+Beginner:wght@515&family=Oregano&display=swap");
+//$typography-font-family: "Oregano", sans-serif !default;
 
-$dark      : #1D1D1D;
-$dark-page : #121212;
+@import url("https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Edu+QLD+Beginner:wght@600&family=Edu+SA+Beginner:wght@515&family=Oregano&display=swap");
+$typography-font-family: "Alegreya Sans", sans-serif !default;
 
-$positive  : #21BA45;
-$negative  : #C10015;
-$info      : #31CCEC;
-$warning   : #F2C037;
+$primary: #cb7169;
+$secondary: #704214;
+$accent: #9c27b0;
+
+$dark: #1d1d1d;
+$dark-page: #121212;
+
+$positive: #f5e1ce;
+$negative: #ffffff;
+$info: #a9a27c;
+$warning: #f2c037;

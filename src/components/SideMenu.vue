@@ -4,7 +4,7 @@
       v-model="insideModel"
       horizontal
       :style="height"
-      separator-class="bg-grey-4"
+      separator-class="bg-grey-6"
       separator-style="height: 3px"
     >
       <template #before>
@@ -12,11 +12,12 @@
           :thumb-style="thumbStyle"
           :bar-style="barStyle"
           style="height: 100%"
+          class="bg-info"
         >
           <div class="row q-gutter-xs q-ml-sm q-mt-sm">
-            <div class="text-h6">Tags</div>
+            <div class="text-h6 text-white">Tags</div>
             <q-fab
-              color="none"
+              color="white"
               flat
               push
               icon="sell"
@@ -24,13 +25,13 @@
               padding="xs"
             >
               <q-fab-action
-                color="primary"
+                color="white"
                 @click="console.log('ver las notas eliminadas...')"
                 icon="delete"
                 padding="xs"
               />
               <q-fab-action
-                color="primary"
+                color="white"
                 @click="console.log('ver todas las notas...')"
                 icon="note"
                 padding="xs"
@@ -43,7 +44,7 @@
             no-connectors
             dense
             v-model:expanded="expanded"
-            selected-color="primary bg-blue-2 rounded-borders"
+            selected-color=" bg-negative rounded-borders"
             v-model:selected="selectedTagId"
             no-selection-unset
             @click="console.log('Tag selected: ' + selectedTagId)"
@@ -51,7 +52,13 @@
             <template v-slot:default-header="prop">
               <div class="row justify-between full-width">
                 <div class="col-10">
-                  <div class="text-weight-bold text-primary">
+                  <div
+                    :class="
+                      selectedTagId === prop.node.id
+                        ? 'text-black text-weight-bold'
+                        : 'text-white'
+                    "
+                  >
                     {{ prop.node.label }}
                   </div>
                 </div>
@@ -76,15 +83,26 @@
           :thumb-style="thumbStyle"
           :bar-style="barStyle"
           style="height: 100%"
+          class="bg-info"
         >
-          <div class="text-h6 q-ml-md q-mt-sm">{{ selectedTag }}</div>
+          <div class="text-h6 q-ml-md q-mt-sm text-white">
+            {{ selectedTag }}
+          </div>
           <q-list dense separator>
-            <q-item clickable v-ripple v-for="n in 20" :key="n">
-              <q-item-section>
-                <q-item-label :class="estilo" @click="selectNote(n)"
-                  >Nota numero {{ n }}</q-item-label
-                >
-              </q-item-section>
+            <q-item
+              clickable
+              v-ripple
+              v-for="note in notes"
+              :key="note.id"
+              :active="selectedNote === note.id"
+              @click="
+                selectedNote = note.id;
+                $emit('update', note);
+              "
+              class="text-white"
+              active-class="bg-negative text-black text-weight-bold"
+            >
+              {{ note.name }}
             </q-item>
           </q-list>
         </q-scroll-area>
@@ -125,13 +143,6 @@ const selectedTag = computed(() => {
   return findLabelById(simple.value, selectedTagId.value);
 });
 
-const estilo = computed(() => {
-  return {
-    "bg-dark": selectedNote.value === "2",
-    "text-white": selectedNote.value === "2",
-  };
-});
-
 //funciones
 function findLabelById(list, id) {
   let returntag = list.find((tag) => {
@@ -150,6 +161,7 @@ function findLabelById(list, id) {
   return returntag;
 }
 
+//TODO modificador de evento
 function editTag(selectTag) {
   setTimeout(function () {
     alert("Edit Tag:  " + selectedTag.value);
@@ -164,7 +176,7 @@ function selectNote(id) {
 const insideModel = ref(40);
 const expanded = ref(["3"]);
 const selectedTagId = ref("2");
-const selectedNote = ref(2);
+const selectedNote = ref("1");
 const simple = ref([
   {
     id: "1",
@@ -237,4 +249,79 @@ const simple = ref([
     label: "Categoria 10",
   },
 ]);
+
+const notes = [
+  {
+    id: "1",
+    name: "Nota Ruddy Jedrzej",
+  },
+  {
+    id: "2",
+    name: "Nota Mallorie Alessandrini",
+  },
+  {
+    id: "3",
+    name: "Nota Elisabetta Wicklen",
+  },
+  {
+    id: "4",
+    name: "Nota Sekaa Fawdrey",
+  },
+  {
+    id: "5",
+    name: "Nota Ruddyy Jedrzej",
+  },
+  {
+    id: "6",
+    name: "Nota Malloriee Alessandrini",
+  },
+  {
+    id: "7",
+    name: "Nota Elisabettaa Wicklen",
+  },
+  {
+    id: "8",
+    name: "Nota Sekaa Fawdrey",
+  },
+  {
+    id: "9",
+    name: "Nota2 Sekaa Fawdrey",
+  },
+  {
+    id: "10",
+    name: "Nota2 Ruddyy Jedrzej",
+  },
+  {
+    id: "11",
+    name: "Nota2 Malloriee Alessandrini",
+  },
+  {
+    id: "12",
+    name: "Nota2 Elisabettaa Wicklen",
+  },
+  {
+    id: "13",
+    name: "Nota2 Sekaa Fawdrey",
+  },
+  {
+    id: "14",
+    name: "Nota2 Sekaa Fawdrey",
+  },
+  {
+    id: "15",
+    name: "Nota2 Ruddyy Jedrzej",
+  },
+  {
+    id: "16",
+    name: "Nota2 Malloriee Alessandrini",
+  },
+  {
+    id: "17",
+    name: "Nota2 Elisabettaa Wicklen",
+  },
+  {
+    id: "18",
+    name: "Nota2 Sekaa Fawdrey",
+  },
+];
 </script>

@@ -1,10 +1,16 @@
 <template>
-  <q-layout view="lHh Lpr lff" class="shadow-2">
-    <q-header elevated :class="$q.dark.isActive ? 'bg-secondary' : 'bg-black'">
+  <q-layout view="lHh Lpr lff" class="shadow-2 rounded-borders">
+    <q-header
+      class="shadow-8"
+      elevated
+      :class="$q.dark.isActive ? 'bg-black' : 'bg-primary text-white'"
+    >
       <q-toolbar>
         <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
 
-        <q-toolbar-title class="absolute-center">MyNotes</q-toolbar-title>
+        <q-toolbar-title class="absolute-center text-weight-bold">{{
+          noteTitle
+        }}</q-toolbar-title>
         <q-btn
           flat
           class="absolute-right q-ma-sm"
@@ -24,7 +30,7 @@
       bordered
       :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'"
     >
-      <side-menu />
+      <side-menu @update="updateNote" />
     </q-drawer>
 
     <q-dialog
@@ -58,4 +64,11 @@ import EditTags from "../components/EditTags.vue";
 
 const dialog = ref(false);
 const drawer = ref(false);
+const noteTitle = ref("");
+
+const updateNote = (note) => {
+  noteTitle.value = note.name;
+  console.log("actualizar nota:");
+  console.log(note);
+};
 </script>
