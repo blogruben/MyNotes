@@ -19,6 +19,7 @@
 
   <q-scroll-area :visible="true" :thumb-style="thumbStyle" style="height: 100%">
     <q-tree
+      color="secondary"
       :nodes="simple"
       node-key="id"
       no-connectors
@@ -35,8 +36,8 @@
             <div
               :class="
                 selectedTagId === prop.node.id
-                  ? 'text-black text-weight-bold'
-                  : 'text-white'
+                  ? 'text-black text-weight-bold q-ml-xs'
+                  : 'text-white q-ml-xs'
               "
             >
               {{ prop.node.label }}

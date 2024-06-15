@@ -17,12 +17,25 @@
       <template #after>
         <div class="text-h6 q-pl-md q-pt-sm text-white">
           {{ selectedTag.label }}
+
+          <q-popup-edit v-model="selectedTag.label" auto-save v-slot="scope">
+            <q-input
+              class="q-ml-md"
+              v-model="scope.value"
+              dense
+              autofocus
+              counter
+              @keyup.enter="scope.set"
+            />
+          </q-popup-edit>
         </div>
 
         <q-scroll-area
           :visible="true"
           :thumb-style="thumbStyle"
           style="height: 100%"
+          ref="scrollPosition"
+          @scroll="onScroll"
         >
           <q-list dense separator>
             <q-item
@@ -30,13 +43,13 @@
               v-ripple
               v-for="note in notes"
               :key="note.id"
-              :active="selectedNote === note.id"
+              :active="selectedNote.idActiveNote === note.id"
               @click="
-                selectedNote = note.id;
+                selectedNote.idActiveNote = note.id;
                 $emit('update', note);
               "
               class="text-white"
-              active-class="bg-negative text-black text-weight-bold"
+              active-class="bg-negative text-black text-weight-bold rounded-borders"
             >
               {{ note.name }}
             </q-item>
@@ -53,7 +66,24 @@ import TagList from "./TagList.vue";
 
 //Calculate height in pixel
 const height = ref("height: " + window.innerHeight + "px");
-let activatedNotes = ref();
+let activatedNotes = ref([
+  { idTag: "1", idActiveNote: "16", verticalPx: 188 },
+  { idTag: "1-1", idActiveNote: "1", verticalPx: 0 },
+  { idTag: "1-2", idActiveNote: "1", verticalPx: 0 },
+  { idTag: "2", idActiveNote: "2", verticalPx: 0 },
+  { idTag: "3", idActiveNote: "3", verticalPx: 0 },
+  { idTag: "3-1", idActiveNote: "1", verticalPx: 0 },
+  { idTag: "3-2", idActiveNote: "1", verticalPx: 0 },
+  { idTag: "3-2-1", idActiveNote: "1", verticalPx: 0 },
+  { idTag: "3-2-2", idActiveNote: "1", verticalPx: 0 },
+  { idTag: "4", idActiveNote: "1", verticalPx: 0 },
+  { idTag: "5", idActiveNote: "1", verticalPx: 0 },
+  { idTag: "6", idActiveNote: "1", verticalPx: 0 },
+  { idTag: "7", idActiveNote: "1", verticalPx: 0 },
+  { idTag: "8", idActiveNote: "1", verticalPx: 0 },
+  { idTag: "9", idActiveNote: "1", verticalPx: 0 },
+  { idTag: "10", idActiveNote: "1", verticalPx: 0 },
+]);
 window.addEventListener("resize", reportWindowSize);
 function reportWindowSize() {
   height.value = "height: " + window.innerHeight + "px";
@@ -68,83 +98,48 @@ const thumbStyle = {
   opacity: 0.8,
 };
 
-function updateTag(tag) {
-  activatedNotes.value = getActivatedNotes();
-  saveCurrentActivatedNotes();
-  console.table("XXX " + JSON.stringify(activatedNotes.value));
-  const activatedNote = getActivatedNoteNewTag(tag);
+function onScroll({ verticalPosition }) {
+  selectedNote.value.verticalPx = verticalPosition;
+}
 
-  console.log("selectedTag " + JSON.stringify(tag));
-  console.log("selectedNote " + JSON.stringify(activatedNote));
+function updateTag(tag) {
+  let currentNote = getCurrentActivatedNotes();
+  currentNote = selectedNote.value;
+  const activatedNote = getActivatedNoteNewTag(tag);
 
   //update tag title
   selectedTag.value = tag;
   //update active note
   selectedNote.value = activatedNote;
+  scrollPosition.value.setScrollPosition("vertical", activatedNote.verticalPx);
+  console.table(activatedNotes.value);
 }
 
-function getActivatedNotes() {
-  //getActivatedNotes
-  let activatedNotes = null; // = sessionStorage.getItem("activatedNotes");
-  if (!activatedNotes) {
-    activatedNotes = [
-      { idTag: "1", idActiveNote: "16" },
-      { idTag: "1-1", idActiveNote: "1" },
-      { idTag: "1-2", idActiveNote: "1" },
-      { idTag: "2", idActiveNote: "2" },
-      { idTag: "3", idActiveNote: "3" },
-      { idTag: "3-1", idActiveNote: "1" },
-      { idTag: "3-2", idActiveNote: "1" },
-      { idTag: "3-2-1", idActiveNote: "1" },
-      { idTag: "3-2-2", idActiveNote: "1" },
-      { idTag: "4", idActiveNote: "1" },
-      { idTag: "5", idActiveNote: "1" },
-      { idTag: "6", idActiveNote: "1" },
-      { idTag: "7", idActiveNote: "1" },
-      { idTag: "8", idActiveNote: "1" },
-      { idTag: "9", idActiveNote: "1" },
-      { idTag: "10", idActiveNote: "1" },
-    ];
-  }
-  //console.table(activatedNotes);
-  return activatedNotes;
-}
-
-function saveCurrentActivatedNotes() {
-  //console.log("selectedTag.value.id " + selectedTag.value.id);
-  //console.log("activatedNotes " + JSON.stringify(activatedNotes.value));
-
+function getCurrentActivatedNotes() {
   const index = activatedNotes.value.findIndex(
     (obj) => obj.idTag == selectedTag.value.id
   );
-  const currentNote = activatedNotes.value[index];
-  currentNote.idActiveNote = selectedNote.value;
-
-  //console.log("currentNote: " + JSON.stringify(currentNote));
+  return activatedNotes.value[index];
 }
 
 function getActivatedNoteNewTag(tag) {
   const note = activatedNotes.value.find((obj) => {
     return obj.idTag === tag.id;
   });
-  //console.log("activatedNotes: " + JSON.stringify(activatedNotes));
-  //console.log("tag: " + JSON.stringify(tag));
-  console.log("NOTE: " + JSON.stringify(note));
-  console.log("activatedNotes.value " + JSON.stringify(activatedNotes.value));
-  return note.idActiveNote;
+  return note;
 }
 
 const emit = defineEmits(["update"]);
 
 onMounted(() => {
-  emit("update", findNoteById(selectedNote.value));
+  emit("update", findNoteById(selectedNote.value.idActiveNote));
 });
 
 const insideModel = ref(40);
 
-const selectedTag = ref({ id: "1" });
-const selectedNote = ref("1"); //notes[0].id
-
+const selectedTag = ref({ id: "1", label: "" });
+const selectedNote = ref({ idTag: "1", idActiveNote: "1", verticalPx: "0" }); //notes[0].id
+const scrollPosition = ref(null);
 const notes = [
   {
     id: "1",
