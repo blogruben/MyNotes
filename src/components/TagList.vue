@@ -1,27 +1,23 @@
 <template>
-  <q-scroll-area
-    :thumb-style="thumbStyle"
-    :bar-style="barStyle"
-    style="height: 100%"
-    class="bg-info"
-  >
-    <div class="row q-gutter-xs q-ml-sm q-mt-sm">
-      <div class="text-h6 text-white">Tags</div>
-      <q-fab color="white" flat push icon="sell" direction="right" padding="xs">
-        <q-fab-action
-          color="white"
-          @click="console.log('ver las notas eliminadas...')"
-          icon="delete"
-          padding="xs"
-        />
-        <q-fab-action
-          color="white"
-          @click="console.log('ver todas las notas...')"
-          icon="note"
-          padding="xs"
-        />
-      </q-fab>
-    </div>
+  <div class="row q-gutter-xs q-ml-sm q-mt-sm">
+    <div class="text-h6 text-white">Tags</div>
+    <q-fab color="white" flat push icon="sell" direction="right" padding="xs">
+      <q-fab-action
+        color="white"
+        @click="console.log('ver las notas eliminadas...')"
+        icon="delete"
+        padding="xs"
+      />
+      <q-fab-action
+        color="white"
+        @click="console.log('ver todas las notas...')"
+        icon="note"
+        padding="xs"
+      />
+    </q-fab>
+  </div>
+
+  <q-scroll-area :visible="true" :thumb-style="thumbStyle" style="height: 100%">
     <q-tree
       :nodes="simple"
       node-key="id"
@@ -69,17 +65,9 @@ import { ref, computed, onMounted, onBeforeMount } from "vue";
 const thumbStyle = {
   right: "4px",
   borderRadius: "5px",
-  backgroundColor: "#027be3",
+  backgroundColor: "#704214",
   width: "5px",
-  opacity: 0.75,
-};
-
-const barStyle = {
-  right: "2px",
-  borderRadius: "9px",
-  backgroundColor: "#027be3",
-  width: "9px",
-  opacity: 0.2,
+  opacity: 0.8,
 };
 
 //propiedades computadas
@@ -91,7 +79,7 @@ const selectedTag = computed(() => {
 function findLabelById(list, id) {
   let returntag = list.find((tag) => {
     return tag.id === id;
-  })?.label;
+  });
   if (returntag) return returntag;
   list.forEach((tag) => {
     let sublist = tag?.children;
@@ -114,13 +102,13 @@ function editTag(selectTag) {
 const emit = defineEmits(["update"]);
 
 onMounted(() => {
-  console.log("Se ha montado el componente: " + selectedTag.value);
+  //console.log("Se ha montado el componente: " + selectedTag.value);
   emit("update", selectedTag.value);
 });
 
 //variables reactivas
 const expanded = ref(["3"]);
-const selectedTagId = ref("1");
+const selectedTagId = ref("2");
 const simple = ref([
   {
     id: "1",

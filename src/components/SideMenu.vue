@@ -6,21 +6,24 @@
       :style="height"
       separator-class="bg-grey-6"
       separator-style="height: 3px"
+      class="bg-info"
+      before-class="overflow-hidden-y"
+      after-class="overflow-hidden-y"
     >
       <template #before>
         <tag-list @update="updateTag"></tag-list>
       </template>
 
       <template #after>
+        <div class="text-h6 q-pl-md q-pt-sm text-white">
+          {{ selectedTag.label }}
+        </div>
+
         <q-scroll-area
+          :visible="true"
           :thumb-style="thumbStyle"
-          :bar-style="barStyle"
           style="height: 100%"
-          class="bg-info"
         >
-          <div class="text-h6 q-ml-md q-mt-sm text-white">
-            {{ selectedTag }}
-          </div>
           <q-list dense separator>
             <q-item
               clickable
@@ -50,6 +53,7 @@ import TagList from "./TagList.vue";
 
 //Calculate height in pixel
 const height = ref("height: " + window.innerHeight + "px");
+let activatedNotes = ref();
 window.addEventListener("resize", reportWindowSize);
 function reportWindowSize() {
   height.value = "height: " + window.innerHeight + "px";
@@ -59,36 +63,87 @@ function reportWindowSize() {
 const thumbStyle = {
   right: "4px",
   borderRadius: "5px",
-  backgroundColor: "#027be3",
+  backgroundColor: "#704214",
   width: "5px",
-  opacity: 0.75,
+  opacity: 0.8,
 };
 
-const barStyle = {
-  right: "2px",
-  borderRadius: "9px",
-  backgroundColor: "#027be3",
-  width: "9px",
-  opacity: 0.2,
-};
+function updateTag(tag) {
+  activatedNotes.value = getActivatedNotes();
+  saveCurrentActivatedNotes();
+  console.table("XXX " + JSON.stringify(activatedNotes.value));
+  const activatedNote = getActivatedNoteNewTag(tag);
 
-function updateTag(title) {
-  console.log("title " + title);
-  selectedTag.value = title;
+  console.log("selectedTag " + JSON.stringify(tag));
+  console.log("selectedNote " + JSON.stringify(activatedNote));
+
+  //update tag title
+  selectedTag.value = tag;
+  //update active note
+  selectedNote.value = activatedNote;
+}
+
+function getActivatedNotes() {
+  //getActivatedNotes
+  let activatedNotes = null; // = sessionStorage.getItem("activatedNotes");
+  if (!activatedNotes) {
+    activatedNotes = [
+      { idTag: "1", idActiveNote: "16" },
+      { idTag: "1-1", idActiveNote: "1" },
+      { idTag: "1-2", idActiveNote: "1" },
+      { idTag: "2", idActiveNote: "2" },
+      { idTag: "3", idActiveNote: "3" },
+      { idTag: "3-1", idActiveNote: "1" },
+      { idTag: "3-2", idActiveNote: "1" },
+      { idTag: "3-2-1", idActiveNote: "1" },
+      { idTag: "3-2-2", idActiveNote: "1" },
+      { idTag: "4", idActiveNote: "1" },
+      { idTag: "5", idActiveNote: "1" },
+      { idTag: "6", idActiveNote: "1" },
+      { idTag: "7", idActiveNote: "1" },
+      { idTag: "8", idActiveNote: "1" },
+      { idTag: "9", idActiveNote: "1" },
+      { idTag: "10", idActiveNote: "1" },
+    ];
+  }
+  //console.table(activatedNotes);
+  return activatedNotes;
+}
+
+function saveCurrentActivatedNotes() {
+  //console.log("selectedTag.value.id " + selectedTag.value.id);
+  //console.log("activatedNotes " + JSON.stringify(activatedNotes.value));
+
+  const index = activatedNotes.value.findIndex(
+    (obj) => obj.idTag == selectedTag.value.id
+  );
+  const currentNote = activatedNotes.value[index];
+  currentNote.idActiveNote = selectedNote.value;
+
+  //console.log("currentNote: " + JSON.stringify(currentNote));
+}
+
+function getActivatedNoteNewTag(tag) {
+  const note = activatedNotes.value.find((obj) => {
+    return obj.idTag === tag.id;
+  });
+  //console.log("activatedNotes: " + JSON.stringify(activatedNotes));
+  //console.log("tag: " + JSON.stringify(tag));
+  console.log("NOTE: " + JSON.stringify(note));
+  console.log("activatedNotes.value " + JSON.stringify(activatedNotes.value));
+  return note.idActiveNote;
 }
 
 const emit = defineEmits(["update"]);
 
 onMounted(() => {
-  console.log(
-    "Se ha montado el componente: " + findNoteById(selectedNote.value)
-  );
   emit("update", findNoteById(selectedNote.value));
 });
 
 const insideModel = ref(40);
 
-const selectedTag = ref("");
+const selectedTag = ref({ id: "1" });
+const selectedNote = ref("1"); //notes[0].id
 
 const notes = [
   {
@@ -164,8 +219,6 @@ const notes = [
     name: "Nota2 Sekaa Fawdrey",
   },
 ];
-
-const selectedNote = ref(notes[0].id);
 
 //funciones
 function findNoteById(id) {

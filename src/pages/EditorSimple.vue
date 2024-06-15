@@ -88,11 +88,17 @@
         </q-card-section>
       </q-card>
     </div>
+    <h1>{{ store.counter }}</h1>
+    <q-btn color="red" @click="store.increment()"> Sumar </q-btn>
+    <q-btn color="green" @click="store.counter--"> Restar </q-btn>
   </q-page>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
+import { useCounterStore } from "stores/notes";
+
+const store = useCounterStore();
 
 const qeditor = ref(
   "<pre>Check out the two different types of dropdowns" +

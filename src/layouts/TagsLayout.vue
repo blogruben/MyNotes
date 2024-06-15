@@ -48,7 +48,7 @@ const noteTitle = ref("");
 
 const updateNote = (note) => {
   noteTitle.value = note.name;
-  console.log("actualizar nota:");
-  console.log(note);
+  //console.log("actualizar nota:");
+  //console.log(note);
 };
 </script>
