@@ -8,9 +8,19 @@
       <q-toolbar>
         <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
 
-        <q-toolbar-title class="absolute-center text-weight-bold">{{
-          noteTitle
-        }}</q-toolbar-title>
+        <q-toolbar-title class="absolute-center text-weight-bold">
+          {{ noteTitle }}
+          <q-popup-edit v-model="noteTitle" auto-save v-slot="scope">
+            <q-input
+              class="q-ml-md"
+              v-model="scope.value"
+              dense
+              autofocus
+              @keyup.enter="scope.set"
+            />
+          </q-popup-edit>
+        </q-toolbar-title>
+
         <q-btn
           flat
           class="absolute-right q-ma-sm"

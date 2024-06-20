@@ -4,68 +4,86 @@
       v-model="insideModel"
       horizontal
       :style="height"
-      separator-class="bg-grey-6"
       separator-style="height: 3px"
       class="bg-info"
-      before-class="overflow-hidden-y"
-      after-class="overflow-hidden-y"
+      before-class="column"
+      after-class="column"
     >
       <template #before>
         <tag-list @update="updateTag"></tag-list>
       </template>
 
       <template #after>
-        <div class="text-h6 q-pl-md q-pt-sm text-white">
-          {{ selectedTag.label }}
+        <div class="row">
+          <div class="text-h6 q-pl-md q-pt-xs text-white">
+            {{ selectedTag.label }}
 
-          <q-popup-edit v-model="selectedTag.label" auto-save v-slot="scope">
-            <q-input
-              class="q-ml-md"
-              v-model="scope.value"
-              dense
-              autofocus
-              counter
-              @keyup.enter="scope.set"
-            />
-          </q-popup-edit>
+            <q-popup-edit v-model="selectedTag.label" auto-save v-slot="scope">
+              <q-input
+                class="q-ml-md"
+                v-model="scope.value"
+                dense
+                autofocus
+                @keyup.enter="scope.set"
+              />
+            </q-popup-edit>
+          </div>
+
+          <q-btn flat round color="white" size="0.7em" icon="sell">
+            <q-tooltip class="">Create new Note</q-tooltip>
+          </q-btn>
         </div>
 
-        <q-scroll-area
-          :visible="true"
-          :thumb-style="thumbStyle"
-          style="height: 100%"
-          ref="scrollPosition"
-          @scroll="onScroll"
-        >
-          <q-list dense separator>
-            <q-item
-              clickable
-              v-ripple
-              v-for="note in notes"
-              :key="note.id"
-              :active="selectedNote.idActiveNote === note.id"
-              @click="
-                selectedNote.idActiveNote = note.id;
-                $emit('update', note);
-              "
-              class="text-white"
-              active-class="bg-negative text-black text-weight-bold rounded-borders"
-            >
-              {{ note.name }}
-            </q-item>
-          </q-list>
-        </q-scroll-area>
+        <q-separator
+          class="q-ml-md"
+          color="grey-7"
+          style="height: 1px; opacity: 0.2"
+          v-show="showSeparator"
+        />
+
+        <div class="col" id="listNotes">
+          <q-scroll-area
+            :visible="true"
+            :thumb-style="thumbStyle"
+            style="height: 100%"
+            ref="scrollPosition"
+            @scroll="onScroll"
+          >
+            <q-list dense separator>
+              <q-item
+                clickable
+                v-ripple
+                v-for="note in notes"
+                :key="note.id"
+                :active="selectedNote.idActiveNote === note.id"
+                @click="
+                  selectedNote.idActiveNote = note.id;
+                  $emit('update', note);
+                "
+                class="text-white"
+                active-class="bg-negative text-black text-weight-bold rounded-borders"
+              >
+                {{ note.name }}
+              </q-item>
+            </q-list>
+          </q-scroll-area>
+        </div>
       </template>
     </q-splitter>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeMount } from "vue";
+import { ref, computed, onMounted } from "vue";
 import TagList from "./TagList.vue";
+
+const showSeparator = computed(() => {
+  return selectedNote.value.verticalPx < 15;
+});
 
 //Calculate height in pixel
 const height = ref("height: " + window.innerHeight + "px");
+
 let activatedNotes = ref([
   { idTag: "1", idActiveNote: "16", verticalPx: 188 },
   { idTag: "1-1", idActiveNote: "1", verticalPx: 0 },
@@ -95,7 +113,7 @@ const thumbStyle = {
   borderRadius: "5px",
   backgroundColor: "#704214",
   width: "5px",
-  opacity: 0.8,
+  opacity: 0.7,
 };
 
 function onScroll({ verticalPosition }) {
@@ -138,7 +156,7 @@ onMounted(() => {
 const insideModel = ref(40);
 
 const selectedTag = ref({ id: "1", label: "" });
-const selectedNote = ref({ idTag: "1", idActiveNote: "1", verticalPx: "0" }); //notes[0].id
+const selectedNote = ref({ idTag: "1", idActiveNote: "1", verticalPx: "0" });
 const scrollPosition = ref(null);
 const notes = [
   {

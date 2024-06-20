@@ -1,62 +1,57 @@
 <template>
-  <div class="row q-gutter-xs q-ml-sm q-mt-sm">
-    <div class="text-h6 text-white">Tags</div>
-    <q-fab color="white" flat push icon="sell" direction="right" padding="xs">
-      <q-fab-action
-        color="white"
-        @click="console.log('ver las notas eliminadas...')"
-        icon="delete"
-        padding="xs"
-      />
-      <q-fab-action
-        color="white"
-        @click="console.log('ver todas las notas...')"
-        icon="note"
-        padding="xs"
-      />
-    </q-fab>
+  <div class="q-gutter-xs q-pl-sm q-pt-sm">
+    <div class="row">
+      <div class="text-h6 q-pl-sm q-pt-xs text-white">Tags</div>
+      <q-btn flat round color="white" size="0.7em" icon="style" />
+    </div>
   </div>
 
-  <q-scroll-area :visible="true" :thumb-style="thumbStyle" style="height: 100%">
-    <q-tree
-      color="secondary"
-      :nodes="simple"
-      node-key="id"
-      no-connectors
-      dense
-      v-model:expanded="expanded"
-      selected-color=" bg-negative rounded-borders"
-      v-model:selected="selectedTagId"
-      no-selection-unset
-      @click="$emit('update', selectedTag)"
+  <div class="col">
+    <q-scroll-area
+      :visible="true"
+      :thumb-style="thumbStyle"
+      style="height: 100%"
     >
-      <template v-slot:default-header="prop">
-        <div class="row justify-between full-width">
-          <div class="col-10">
-            <div
-              :class="
-                selectedTagId === prop.node.id
-                  ? 'text-black text-weight-bold q-ml-xs'
-                  : 'text-white q-ml-xs'
-              "
-            >
-              {{ prop.node.label }}
+      <q-tree
+        color="secondary"
+        :nodes="simple"
+        node-key="id"
+        no-connectors
+        dense
+        v-model:expanded="expanded"
+        selected-color=" bg-negative rounded-borders"
+        v-model:selected="selectedTagId"
+        no-selection-unset
+        @click="$emit('update', selectedTag)"
+      >
+        <template v-slot:default-header="prop">
+          <div class="row justify-between full-width">
+            <div class="col-10">
+              <div
+                :class="
+                  selectedTagId === prop.node.id
+                    ? 'text-black text-weight-bold q-ml-xs'
+                    : 'text-white q-ml-xs'
+                "
+              >
+                {{ prop.node.label }}
+              </div>
+            </div>
+
+            <div class="col-2">
+              <q-btn
+                flat
+                padding="none"
+                color="secondary"
+                icon="more_horiz"
+                @click="editTag"
+              />
             </div>
           </div>
-
-          <div class="col-2">
-            <q-btn
-              flat
-              padding="none"
-              color="secondary"
-              icon="more_horiz"
-              @click="editTag"
-            />
-          </div>
-        </div>
-      </template>
-    </q-tree>
-  </q-scroll-area>
+        </template>
+      </q-tree>
+    </q-scroll-area>
+  </div>
 </template>
 
 <script setup>
