@@ -130,7 +130,7 @@ function updateTag(tag) {
   //update active note
   selectedNote.value = activatedNote;
   scrollPosition.value.setScrollPosition("vertical", activatedNote.verticalPx);
-  console.table(activatedNotes.value);
+  //console.table(activatedNotes.value);
 }
 
 function getCurrentActivatedNotes() {
