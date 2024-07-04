@@ -9,7 +9,8 @@
     <p v-for="note in notes" :key="note.id">
       {{ note.note }}
     </p>
-    <q-btn label="Ver notas" @click="verNotas" color="primary" />
+    <q-btn label="Ver tag simples" @click="verTags" color="primary" />
+    <q-btn label="Insert tag simple" @click="insertTags" color="primary" />
   </q-page>
 </template>
 
@@ -37,17 +38,31 @@ async function login() {
   }
 }
 
-async function verNotas() {
+async function verTags() {
   try {
-    let { data: simple_tags, error } = await supabase.from("tags").select(`id,
-               name,
-               tags ( id, name )
+    let { data: simple_tags, error } = await supabase.from("simple_tags")
+      .select(`id,
+               tag
                  `);
     if (error) throw error;
     //notes.value = simple_tags;
     console.log(simple_tags);
   } catch (error) {
     alert(error);
+  }
+}
+
+async function insertTags() {
+  try {
+    const { data, error } = await supabase
+      .from("simple_tags")
+      .insert([{ tag: "tag xxxx" }])
+      .select();
+    if (error) throw error;
+    //notes.value = simple_tags;
+    console.log(data);
+  } catch (error) {
+    alert(error.message);
   }
 }
 </script>
